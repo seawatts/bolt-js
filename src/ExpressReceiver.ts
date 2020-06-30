@@ -178,7 +178,7 @@ export default class ExpressReceiver implements Receiver {
     };
 
     try {
-      await this.bolt?.processEvent(event);
+      await this.bolt?.processEvent(event, req, res);
       if (storedResponse !== undefined) {
         if (typeof storedResponse === 'string') {
           res.send(storedResponse);

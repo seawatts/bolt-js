@@ -223,7 +223,7 @@ class App {
     /**
      * Handles events from the receiver
      */
-    async processEvent(event) {
+    async processEvent(event, req, res) {
         const { body, ack } = event;
         // TODO: when generating errors (such as in the say utility) it may become useful to capture the current context,
         // or even all of the args, as properties of the error. This would give error handling code some ability to deal
@@ -247,7 +247,7 @@ class App {
             this.logger.warn('Authorization of incoming event did not succeed. No listeners will be called.');
             return this.handleError(error);
         }
-        const context = { ...authorizeResult };
+        const context = { ...authorizeResult, req, res };
         // Factory for say() utility
         const createSay = (channelId) => {
             const token = selectToken(context);

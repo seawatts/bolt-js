@@ -1,6 +1,7 @@
 /// <reference types="node" />
 import { Agent } from 'http';
 import { SecureContextOptions } from 'tls';
+import { Request, Response } from 'express';
 import { WebClient, WebClientOptions } from '@slack/web-api';
 import { Logger, LogLevel } from '@slack/logger';
 import { ExpressReceiverOptions } from './ExpressReceiver';
@@ -126,7 +127,7 @@ export default class App {
     /**
      * Handles events from the receiver
      */
-    processEvent(event: ReceiverEvent): Promise<void>;
+    processEvent(event: ReceiverEvent, req: Request, res: Response): Promise<void>;
     /**
      * Global error handler. The final destination for all errors (hopefully).
      */
