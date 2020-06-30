@@ -507,7 +507,7 @@ export default class App {
   /**
    * Handles events from the receiver
    */
-  public async processEvent(event: ReceiverEvent): Promise<void> {
+  public async processEvent(event: ReceiverEvent, req: Request, res: Response): Promise<void> {
     const { body, ack } = event;
     // TODO: when generating errors (such as in the say utility) it may become useful to capture the current context,
     // or even all of the args, as properties of the error. This would give error handling code some ability to deal
@@ -534,7 +534,7 @@ export default class App {
       return this.handleError(error);
     }
 
-    const context: Context = { ...authorizeResult };
+    const context: Context = { ...authorizeResult, req, res };
 
     // Factory for say() utility
     const createSay = (channelId: string): SayFn => {

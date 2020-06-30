@@ -133,7 +133,7 @@ class ExpressReceiver {
             },
         };
         try {
-            await ((_a = this.bolt) === null || _a === void 0 ? void 0 : _a.processEvent(event));
+            await ((_a = this.bolt) === null || _a === void 0 ? void 0 : _a.processEvent(event, req, res));
             if (storedResponse !== undefined) {
                 if (typeof storedResponse === 'string') {
                     res.send(storedResponse);
