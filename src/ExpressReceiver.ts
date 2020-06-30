@@ -29,6 +29,7 @@ export interface ExpressReceiverOptions {
   installationStore?: InstallProviderOptions['installationStore']; // default MemoryInstallationStore
   scopes?: InstallURLOptions['scopes'];
   installerOptions?: InstallerOptions;
+  app?: Application;
 }
 
 // Additional Installer Options
@@ -74,10 +75,9 @@ export default class ExpressReceiver implements Receiver {
     installationStore = undefined,
     scopes = undefined,
     installerOptions = {},
+    app = undefined
   }: ExpressReceiverOptions) {
-    this.app = express();
-    // TODO: what about starting an https server instead of http? what about other options to create the server?
-    this.server = createServer(this.app);
+    this.app = app ?? express();
 
     const expressMiddleware: RequestHandler[] = [
       verifySignatureAndParseRawBody(logger, signingSecret),
@@ -209,7 +209,7 @@ export default class ExpressReceiver implements Receiver {
         // TODO: what about other listener options?
         // TODO: what about asynchronous errors? should we attach a handler for this.server.on('error', ...)?
         // if so, how can we check for only errors related to listening, as opposed to later errors?
-        this.server.listen(port, () => {
+        this.server?.listen(port, () => {
           resolve(this.server);
         });
       } catch (error) {
@@ -223,7 +223,7 @@ export default class ExpressReceiver implements Receiver {
   public stop(): Promise<void> {
     return new Promise((resolve, reject) => {
       // TODO: what about synchronous errors?
-      this.server.close((error) => {
+      this.server?.close((error) => {
         if (error !== undefined) {
           reject(error);
           return;
