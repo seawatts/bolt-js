@@ -23,6 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifySignatureAndParseRawBody = exports.respondToUrlVerification = exports.respondToSslCheck = void 0;
+const http_1 = require("http");
 const express_1 = __importStar(require("express"));
 const raw_body_1 = __importDefault(require("raw-body"));
 const querystring_1 = __importDefault(require("querystring"));
@@ -38,6 +39,9 @@ class ExpressReceiver {
     constructor({ signingSecret = '', logger = new logger_1.ConsoleLogger(), endpoints = { events: '/slack/events' }, processBeforeResponse = false, clientId = undefined, clientSecret = undefined, stateSecret = undefined, installationStore = undefined, scopes = undefined, installerOptions = {}, app = undefined }) {
         this.installer = undefined;
         this.app = app !== null && app !== void 0 ? app : express_1.default();
+        if (!app) {
+            this.server = http_1.createServer(this.app);
+        }
         const expressMiddleware = [
             verifySignatureAndParseRawBody(logger, signingSecret),
             exports.respondToSslCheck,
@@ -156,14 +160,18 @@ class ExpressReceiver {
     // TODO: the return value should be defined as a type that both http and https servers inherit from, or a union
     start(port) {
         return new Promise((resolve, reject) => {
-            var _a;
             try {
                 // TODO: what about other listener options?
                 // TODO: what about asynchronous errors? should we attach a handler for this.server.on('error', ...)?
                 // if so, how can we check for only errors related to listening, as opposed to later errors?
-                (_a = this.server) === null || _a === void 0 ? void 0 : _a.listen(port, () => {
-                    resolve(this.server);
-                });
+                if (this.server) {
+                    this.server.listen(port, () => {
+                        resolve(this.server);
+                    });
+                }
+                else {
+                    resolve();
+                }
             }
             catch (error) {
                 reject(error);
@@ -174,15 +182,19 @@ class ExpressReceiver {
     // generic types
     stop() {
         return new Promise((resolve, reject) => {
-            var _a;
             // TODO: what about synchronous errors?
-            (_a = this.server) === null || _a === void 0 ? void 0 : _a.close((error) => {
-                if (error !== undefined) {
-                    reject(error);
-                    return;
-                }
+            if (this.server) {
+                this.server.close((error) => {
+                    if (error !== undefined) {
+                        reject(error);
+                        return;
+                    }
+                    resolve();
+                });
+            }
+            else {
                 resolve();
-            });
+            }
         });
     }
 }
