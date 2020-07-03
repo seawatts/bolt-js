@@ -77,6 +77,10 @@ export default class ExpressReceiver implements Receiver {
   }: ExpressReceiverOptions) {
     this.app = app ?? express();
 
+    if (!app) {
+      this.server = createServer(this.app);
+    }
+
     const expressMiddleware: RequestHandler[] = [
       verifySignatureAndParseRawBody(logger, signingSecret),
       respondToSslCheck,
@@ -205,9 +209,13 @@ export default class ExpressReceiver implements Receiver {
         // TODO: what about other listener options?
         // TODO: what about asynchronous errors? should we attach a handler for this.server.on('error', ...)?
         // if so, how can we check for only errors related to listening, as opposed to later errors?
-        this.server?.listen(port, () => {
-          resolve(this.server);
-        });
+        if (this.server) {
+          this.server.listen(port, () => {
+            resolve(this.server);
+          });
+        } else {
+          resolve();
+        }
       } catch (error) {
         reject(error);
       }
@@ -219,14 +227,20 @@ export default class ExpressReceiver implements Receiver {
   public stop(): Promise<void> {
     return new Promise((resolve, reject) => {
       // TODO: what about synchronous errors?
-      this.server?.close((error) => {
-        if (error !== undefined) {
-          reject(error);
-          return;
-        }
+      if (this.server) {
 
+
+        this.server.close((error) => {
+          if (error !== undefined) {
+            reject(error);
+            return;
+          }
+
+          resolve();
+        });
+      } else {
         resolve();
-      });
+      }
     });
   }
 }
