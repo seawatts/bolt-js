@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { Receiver } from './types';
-import { /*createServer,*/ Server } from 'http';
+import { Server } from 'http';
 import { Application, RequestHandler, Router } from 'express';
 import App from './App';
 import { Logger } from '@slack/logger';
