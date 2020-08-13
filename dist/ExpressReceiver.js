@@ -1,4 +1,5 @@
 "use strict";
+/* eslint-disable @typescript-eslint/explicit-member-accessibility, @typescript-eslint/strict-boolean-expressions */
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
@@ -29,9 +30,9 @@ const raw_body_1 = __importDefault(require("raw-body"));
 const querystring_1 = __importDefault(require("querystring"));
 const crypto_1 = __importDefault(require("crypto"));
 const tsscmp_1 = __importDefault(require("tsscmp"));
-const errors_1 = require("./errors");
 const logger_1 = require("@slack/logger");
 const oauth_1 = require("@slack/oauth");
+const errors_1 = require("./errors");
 /**
  * Receives HTTP requests with Events, Slash Commands, and Actions
  */
@@ -52,12 +53,12 @@ class ExpressReceiver {
         this.logger = logger;
         const endpointList = typeof endpoints === 'string' ? [endpoints] : Object.values(endpoints);
         this.router = express_1.Router();
-        for (const endpoint of endpointList) {
+        endpointList.forEach((endpoint) => {
             this.router.post(endpoint, ...expressMiddleware);
-        }
-        if (clientId !== undefined
-            && clientSecret !== undefined
-            && (stateSecret !== undefined || installerOptions.stateStore !== undefined)) {
+        });
+        if (clientId !== undefined &&
+            clientSecret !== undefined &&
+            (stateSecret !== undefined || installerOptions.stateStore !== undefined)) {
             this.installer = new oauth_1.InstallProvider({
                 clientId,
                 clientSecret,
@@ -69,18 +70,17 @@ class ExpressReceiver {
         }
         // Add OAuth routes to receiver
         if (this.installer !== undefined) {
-            const redirectUriPath = installerOptions.redirectUriPath === undefined ?
-                '/slack/oauth_redirect' : installerOptions.redirectUriPath;
+            const redirectUriPath = installerOptions.redirectUriPath === undefined ? '/slack/oauth_redirect' : installerOptions.redirectUriPath;
             this.router.use(redirectUriPath, async (req, res) => {
                 await this.installer.handleCallback(req, res, installerOptions.callbackOptions);
             });
-            const installPath = installerOptions.installPath === undefined ?
-                '/slack/install' : installerOptions.installPath;
+            const installPath = installerOptions.installPath === undefined ? '/slack/install' : installerOptions.installPath;
             this.router.get(installPath, async (_req, res, next) => {
                 try {
                     const url = await this.installer.generateInstallUrl({
                         metadata: installerOptions.metadata,
                         scopes: scopes,
+                        userScopes: installerOptions.userScopes,
                     });
                     res.send(`<a href=${url}><img alt=""Add to Slack"" height="40" width="139"
               src="https://platform.slack-edge.com/img/add_to_slack.png"
@@ -104,7 +104,7 @@ class ExpressReceiver {
             }
             // tslint:disable-next-line: align
         }, 3001);
-        let storedResponse = undefined;
+        let storedResponse;
         const event = {
             body: req.body,
             ack: async (response) => {
@@ -253,9 +253,7 @@ function verifySignatureAndParseRawBody(logger, signingSecret) {
 }
 exports.verifySignatureAndParseRawBody = verifySignatureAndParseRawBody;
 function logError(logger, message, error) {
-    const logMessage = ('code' in error)
-        ? `${message} (code: ${error.code}, message: ${error.message})`
-        : `${message} (error: ${error})`;
+    const logMessage = 'code' in error ? `${message} (code: ${error.code}, message: ${error.message})` : `${message} (error: ${error})`;
     logger.warn(logMessage);
 }
 function verifyRequestSignature(signingSecret, body, signature, requestTimestamp) {
@@ -263,12 +261,13 @@ function verifyRequestSignature(signingSecret, body, signature, requestTimestamp
         throw new errors_1.ReceiverAuthenticityError('Slack request signing verification failed. Some headers are missing.');
     }
     const ts = Number(requestTimestamp);
+    // eslint-disable-next-line no-restricted-globals
     if (isNaN(ts)) {
         throw new errors_1.ReceiverAuthenticityError('Slack request signing verification failed. Timestamp is invalid.');
     }
     // Divide current date to match Slack ts format
     // Subtract 5 minutes from current time
-    const fiveMinutesAgo = Math.floor(Date.now() / 1000) - (60 * 5);
+    const fiveMinutesAgo = Math.floor(Date.now() / 1000) - 60 * 5;
     if (ts < fiveMinutesAgo) {
         throw new errors_1.ReceiverAuthenticityError('Slack request signing verification failed. Timestamp is too old.');
     }

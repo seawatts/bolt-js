@@ -13,8 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const packageJson = require('../package.json'); // tslint:disable-line:no-require-imports no-var-requires
 const please_upgrade_node_1 = __importDefault(require("please-upgrade-node"));
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const packageJson = require('../package.json'); // eslint-disable-line @typescript-eslint/no-var-requires
 please_upgrade_node_1.default(packageJson);
 var App_1 = require("./App");
 Object.defineProperty(exports, "App", { enumerable: true, get: function () { return App_1.default; } });

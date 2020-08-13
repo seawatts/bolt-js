@@ -42,11 +42,11 @@ declare type KnownEventFromType<T extends string> = Extract<SlackEvent, {
  * Type function which tests whether or not the given `Event` contains a channel ID context for where the event
  * occurred, and returns `Type` when the test passes. Otherwise this returns `never`.
  */
-declare type WhenEventHasChannelContext<Event, Type> = Event extends ({
+declare type WhenEventHasChannelContext<Event, Type> = Event extends {
     channel: string;
 } | {
     item: {
         channel: string;
     };
-}) ? Type : never;
+} ? Type : never;
 //# sourceMappingURL=index.d.ts.map
