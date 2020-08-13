@@ -13,7 +13,7 @@ export declare type KnownKeys<T> = {
 /**
  * Type function which allows either types `T` or `U`, but not both.
  */
-export declare type XOR<T, U> = (T | U) extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
+export declare type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
 declare type Without<T, U> = {
     [P in Exclude<keyof T, keyof U>]?: never;
 };

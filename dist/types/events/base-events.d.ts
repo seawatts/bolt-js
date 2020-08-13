@@ -1,5 +1,5 @@
-import { StringIndexed } from '../helpers';
 import { MessageAttachment, KnownBlock, Block, View } from '@slack/types';
+import { StringIndexed } from '../helpers';
 /**
  * All known event types in Slack's Events API
  *
@@ -451,12 +451,26 @@ export interface PinRemovedEvent extends StringIndexed {
     has_pins: boolean;
     event_ts: string;
 }
+interface ReactionMessageItem {
+    type: 'message';
+    channel: string;
+    ts: string;
+}
+interface ReactionFileItem {
+    type: 'file';
+    file: string;
+}
+interface ReactionFileCommentItem {
+    type: 'file_comment';
+    file_comment: string;
+    file: string;
+}
 export interface ReactionAddedEvent extends StringIndexed {
     type: 'reaction_added';
     user: string;
     reaction: string;
     item_user: string;
-    item: {};
+    item: ReactionMessageItem | ReactionFileItem | ReactionFileCommentItem;
     event_ts: string;
 }
 export interface ReactionRemovedEvent extends StringIndexed {
@@ -534,4 +548,5 @@ export interface UserChangeEvent extends StringIndexed {
     type: 'user_change';
     user: {};
 }
+export {};
 //# sourceMappingURL=base-events.d.ts.map

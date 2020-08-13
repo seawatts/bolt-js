@@ -1,4 +1,5 @@
 "use strict";
+/* eslint-disable @typescript-eslint/dot-notation */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.directMention = exports.subtype = exports.ignoreSelf = exports.matchEventType = exports.matchCommandName = exports.matchMessage = exports.matchConstraints = exports.onlyViewActions = exports.onlyEvents = exports.onlyOptions = exports.onlyCommands = exports.onlyShortcuts = exports.onlyActions = void 0;
 const errors_1 = require("../errors");
@@ -18,7 +19,7 @@ exports.onlyActions = async ({ action, next }) => {
  * Middleware that filters out any event that isn't a shortcut
  */
 // tslint:disable-next-line: max-line-length
-exports.onlyShortcuts = async ({ shortcut, next }) => {
+exports.onlyShortcuts = async ({ shortcut, next, }) => {
     // Filter out any non-shortcuts
     if (shortcut === undefined) {
         return;
@@ -66,7 +67,7 @@ exports.onlyEvents = async ({ event, next }) => {
 /**
  * Middleware that filters out any event that isn't a view_submission or view_closed event
  */
-exports.onlyViewActions = async ({ view, next }) => {
+exports.onlyViewActions = async ({ view, next, }) => {
     // Filter out anything that doesn't have a view
     if (view === undefined) {
         return;
@@ -129,13 +130,11 @@ function matchConstraints(constraints) {
             if (isViewBody(body)) {
                 callbackId = body['view']['callback_id'];
             }
+            else if (isCallbackIdentifiedBody(body)) {
+                callbackId = body['callback_id'];
+            }
             else {
-                if (isCallbackIdentifiedBody(body)) {
-                    callbackId = body['callback_id'];
-                }
-                else {
-                    return;
-                }
+                return;
             }
             if (typeof constraints.callback_id === 'string') {
                 if (callbackId !== constraints.callback_id) {
@@ -241,10 +240,7 @@ function ignoreSelf() {
             }
             // Its an Events API event that isn't of type message, but the user ID might match our own app. Filter these out.
             // However, some events still must be fired, because they can make sense.
-            const eventsWhichShouldBeKept = [
-                'member_joined_channel',
-                'member_left_channel',
-            ];
+            const eventsWhichShouldBeKept = ['member_joined_channel', 'member_left_channel'];
             const isEventShouldBeKept = eventsWhichShouldBeKept.includes(args.event.type);
             if (botUserId !== undefined && args.event.user === botUserId && !isEventShouldBeKept) {
                 return;
@@ -256,9 +252,10 @@ function ignoreSelf() {
     };
 }
 exports.ignoreSelf = ignoreSelf;
-function subtype(subtype) {
+function subtype(subtype1) {
+    // eslint-disable-line no-shadow
     return async ({ message, next }) => {
-        if (message.subtype === subtype) {
+        if (message.subtype === subtype1) {
             // TODO: remove the non-null assertion operator
             await next();
         }
@@ -281,7 +278,9 @@ function directMention() {
         if (matches === null || // stop when no matches are found
             matches.index !== 0 || // stop if match isn't at the beginning
             // stop if match isn't a user mention with the right user ID
-            matches.groups === undefined || matches.groups.type !== '@' || matches.groups.link !== context.botUserId) {
+            matches.groups === undefined ||
+            matches.groups.type !== '@' ||
+            matches.groups.link !== context.botUserId) {
             return;
         }
         // TODO: remove the non-null assertion operator

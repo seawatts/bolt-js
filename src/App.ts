@@ -3,6 +3,7 @@ import { Agent } from 'http';
 import { SecureContextOptions } from 'tls';
 import util from 'util';
 import { WebClient, ChatPostMessageArguments, addAppMetadata, WebClientOptions } from '@slack/web-api';
+import { Request, Response } from 'express';
 import { Logger, LogLevel, ConsoleLogger } from '@slack/logger';
 import axios, { AxiosInstance } from 'axios';
 import ExpressReceiver, { ExpressReceiverOptions } from './ExpressReceiver';

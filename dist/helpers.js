@@ -24,8 +24,11 @@ function getTypeAndConversation(body) {
         const eventBody = body;
         return {
             type: IncomingEventType.Event,
-            conversationId: eventBody.event.channel !== undefined ? eventBody.event.channel :
-                eventBody.event.item !== undefined ? eventBody.event.item.channel : undefined,
+            conversationId: eventBody.event.channel !== undefined
+                ? eventBody.event.channel
+                : eventBody.event.item !== undefined
+                    ? eventBody.event.item.channel
+                    : undefined,
         };
     }
     if (body.command !== undefined) {

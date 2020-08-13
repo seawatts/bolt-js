@@ -52,7 +52,7 @@ export default class ExpressReceiver implements Receiver {
   /* Express app */
   public app: Application;
 
-  private server: Server;
+  private server?: Server;
 
   private bolt: App | undefined;
 

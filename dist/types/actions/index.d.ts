@@ -29,7 +29,7 @@ export declare type SlackAction = BlockAction | InteractiveMessage | DialogSubmi
  * this case `ElementAction` must extend `BasicElementAction`.
  */
 export interface SlackActionMiddlewareArgs<Action extends SlackAction = SlackAction> {
-    payload: (Action extends BlockAction<infer ElementAction> ? ElementAction : Action extends InteractiveMessage<infer InteractiveAction> ? InteractiveAction : Action);
+    payload: Action extends BlockAction<infer ElementAction> ? ElementAction : Action extends InteractiveMessage<infer InteractiveAction> ? InteractiveAction : Action;
     action: this['payload'];
     body: Action;
     say: Action extends Exclude<SlackAction, DialogSubmitAction> ? SayFn : never;

@@ -1,8 +1,8 @@
 /// <reference types="node" />
 import { Agent } from 'http';
 import { SecureContextOptions } from 'tls';
-import { Request, Response } from 'express';
 import { WebClient, WebClientOptions } from '@slack/web-api';
+import { Request, Response } from 'express';
 import { Logger, LogLevel } from '@slack/logger';
 import { ExpressReceiverOptions } from './ExpressReceiver';
 import { ConversationStore } from './conversation-store';
@@ -54,11 +54,11 @@ export interface AuthorizeResult {
 }
 export interface ActionConstraints<A extends SlackAction = SlackAction> {
     type?: A['type'];
-    block_id?: A extends BlockAction ? (string | RegExp) : never;
-    action_id?: A extends BlockAction ? (string | RegExp) : never;
+    block_id?: A extends BlockAction ? string | RegExp : never;
+    action_id?: A extends BlockAction ? string | RegExp : never;
     callback_id?: Extract<A, {
         callback_id?: string;
-    }> extends any ? (string | RegExp) : never;
+    }> extends any ? string | RegExp : never;
 }
 export interface ShortcutConstraints<S extends SlackShortcut = SlackShortcut> {
     type?: S['type'];

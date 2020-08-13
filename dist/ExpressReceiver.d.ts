@@ -1,10 +1,10 @@
 /// <reference types="node" />
-import { Receiver } from './types';
 import { Server } from 'http';
 import { Application, RequestHandler, Router } from 'express';
-import App from './App';
 import { Logger } from '@slack/logger';
 import { InstallProvider, StateStore, InstallationStore, CallbackOptions } from '@slack/oauth';
+import App from './App';
+import { Receiver } from './types';
 export interface ExpressReceiverOptions {
     signingSecret: string;
     logger?: Logger;
@@ -27,6 +27,7 @@ interface InstallerOptions {
     installPath?: string;
     redirectUriPath?: string;
     callbackOptions?: CallbackOptions;
+    userScopes?: string | string[];
 }
 /**
  * Receives HTTP requests with Events, Slash Commands, and Actions

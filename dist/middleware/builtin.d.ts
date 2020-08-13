@@ -34,7 +34,7 @@ export declare const onlyEvents: Middleware<AnyMiddlewareArgs & {
  * Middleware that filters out any event that isn't a view_submission or view_closed event
  */
 export declare const onlyViewActions: Middleware<AnyMiddlewareArgs & {
-    view?: (ViewSubmitAction | ViewClosedAction);
+    view?: ViewSubmitAction | ViewClosedAction;
 }>;
 /**
  * Middleware that checks for matches given constraints
@@ -50,6 +50,6 @@ export declare function matchCommandName(name: string): Middleware<SlackCommandM
  */
 export declare function matchEventType(type: string): Middleware<SlackEventMiddlewareArgs>;
 export declare function ignoreSelf(): Middleware<AnyMiddlewareArgs>;
-export declare function subtype(subtype: string): Middleware<SlackEventMiddlewareArgs<'message'>>;
+export declare function subtype(subtype1: string): Middleware<SlackEventMiddlewareArgs<'message'>>;
 export declare function directMention(): Middleware<SlackEventMiddlewareArgs<'message'>>;
 //# sourceMappingURL=builtin.d.ts.map

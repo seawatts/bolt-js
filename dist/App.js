@@ -13,8 +13,10 @@ const process_1 = require("./middleware/process");
 const conversation_store_1 = require("./conversation-store");
 const helpers_1 = require("./helpers");
 const errors_1 = require("./errors");
-const allSettled = require("promise.allsettled"); // tslint:disable-line:no-require-imports import-name
-const packageJson = require('../package.json'); // tslint:disable-line:no-require-imports no-var-requires
+// eslint-disable-next-line import/order
+const allSettled = require("promise.allsettled"); // eslint-disable-line @typescript-eslint/no-require-imports
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const packageJson = require('../package.json'); // eslint-disable-line @typescript-eslint/no-var-requires
 var logger_2 = require("@slack/logger");
 Object.defineProperty(exports, "LogLevel", { enumerable: true, get: function () { return logger_2.LogLevel; } });
 class WebClientPool {
@@ -59,41 +61,40 @@ class App {
         };
         // the public WebClient instance (app.client) - this one doesn't have a token
         this.client = new web_api_1.WebClient(undefined, this.clientOptions);
-        this.axios = axios_1.default.create(Object.assign({
+        this.axios = axios_1.default.create({
             httpAgent: agent,
             httpsAgent: agent,
-        }, clientTls));
+            ...clientTls,
+        });
         this.middleware = [];
         this.listeners = [];
         // Check for required arguments of ExpressReceiver
         if (receiver !== undefined) {
             this.receiver = receiver;
         }
-        else {
+        else if (signingSecret === undefined) {
             // No custom receiver
-            if (signingSecret === undefined) {
-                throw new errors_1.AppInitializationError('Signing secret not found, so could not initialize the default receiver. Set a signing secret or use a ' +
-                    'custom receiver.');
-            }
-            else {
-                // Create default ExpressReceiver
-                this.receiver = new ExpressReceiver_1.default({
-                    signingSecret,
-                    endpoints,
-                    processBeforeResponse,
-                    clientId,
-                    clientSecret,
-                    stateSecret,
-                    installationStore,
-                    installerOptions,
-                    scopes,
-                    logger: this.logger,
-                });
-            }
+            throw new errors_1.AppInitializationError('Signing secret not found, so could not initialize the default receiver. Set a signing secret or use a ' +
+                'custom receiver.');
+        }
+        else {
+            // Create default ExpressReceiver
+            this.receiver = new ExpressReceiver_1.default({
+                signingSecret,
+                endpoints,
+                processBeforeResponse,
+                clientId,
+                clientSecret,
+                stateSecret,
+                installationStore,
+                installerOptions,
+                scopes,
+                logger: this.logger,
+            });
         }
         let usingOauth = false;
-        if (this.receiver.installer !== undefined
-            && this.receiver.installer.authorize !== undefined) {
+        if (this.receiver.installer !== undefined &&
+            this.receiver.installer.authorize !== undefined) {
             // This supports using the built in ExpressReceiver, declaring your own ExpressReceiver
             // and theoretically, doing a fully custom (non express) receiver that implements OAuth
             usingOauth = true;
@@ -168,11 +169,11 @@ class App {
         this.listeners.push([builtin_1.onlyEvents, builtin_1.matchEventType('message'), ...messageMiddleware]);
     }
     shortcut(callbackIdOrConstraints, ...listeners) {
-        const constraints = (typeof callbackIdOrConstraints === 'string' || util_1.default.types.isRegExp(callbackIdOrConstraints)) ?
-            { callback_id: callbackIdOrConstraints } : callbackIdOrConstraints;
+        const constraints = typeof callbackIdOrConstraints === 'string' || util_1.default.types.isRegExp(callbackIdOrConstraints)
+            ? { callback_id: callbackIdOrConstraints }
+            : callbackIdOrConstraints;
         // Fail early if the constraints contain invalid keys
-        const unknownConstraintKeys = Object.keys(constraints)
-            .filter(k => (k !== 'callback_id' && k !== 'type'));
+        const unknownConstraintKeys = Object.keys(constraints).filter((k) => k !== 'callback_id' && k !== 'type');
         if (unknownConstraintKeys.length > 0) {
             this.logger.error(`Slack listener cannot be attached using unknown constraint keys: ${unknownConstraintKeys.join(', ')}`);
             return;
@@ -181,11 +182,11 @@ class App {
     }
     action(actionIdOrConstraints, ...listeners) {
         // Normalize Constraints
-        const constraints = (typeof actionIdOrConstraints === 'string' || util_1.default.types.isRegExp(actionIdOrConstraints)) ?
-            { action_id: actionIdOrConstraints } : actionIdOrConstraints;
+        const constraints = typeof actionIdOrConstraints === 'string' || util_1.default.types.isRegExp(actionIdOrConstraints)
+            ? { action_id: actionIdOrConstraints }
+            : actionIdOrConstraints;
         // Fail early if the constraints contain invalid keys
-        const unknownConstraintKeys = Object.keys(constraints)
-            .filter(k => (k !== 'action_id' && k !== 'block_id' && k !== 'callback_id' && k !== 'type'));
+        const unknownConstraintKeys = Object.keys(constraints).filter((k) => k !== 'action_id' && k !== 'block_id' && k !== 'callback_id' && k !== 'type');
         if (unknownConstraintKeys.length > 0) {
             this.logger.error(`Action listener cannot be attached using unknown constraint keys: ${unknownConstraintKeys.join(', ')}`);
             return;
@@ -197,16 +198,17 @@ class App {
         this.listeners.push([builtin_1.onlyCommands, builtin_1.matchCommandName(commandName), ...listeners]);
     }
     options(actionIdOrConstraints, ...listeners) {
-        const constraints = (typeof actionIdOrConstraints === 'string' || util_1.default.types.isRegExp(actionIdOrConstraints)) ?
-            { action_id: actionIdOrConstraints } : actionIdOrConstraints;
+        const constraints = typeof actionIdOrConstraints === 'string' || util_1.default.types.isRegExp(actionIdOrConstraints)
+            ? { action_id: actionIdOrConstraints }
+            : actionIdOrConstraints;
         this.listeners.push([builtin_1.onlyOptions, builtin_1.matchConstraints(constraints), ...listeners]);
     }
     view(callbackIdOrConstraints, ...listeners) {
-        const constraints = (typeof callbackIdOrConstraints === 'string' || util_1.default.types.isRegExp(callbackIdOrConstraints)) ?
-            { callback_id: callbackIdOrConstraints, type: 'view_submission' } : callbackIdOrConstraints;
+        const constraints = typeof callbackIdOrConstraints === 'string' || util_1.default.types.isRegExp(callbackIdOrConstraints)
+            ? { callback_id: callbackIdOrConstraints, type: 'view_submission' }
+            : callbackIdOrConstraints;
         // Fail early if the constraints contain invalid keys
-        const unknownConstraintKeys = Object.keys(constraints)
-            .filter(k => (k !== 'callback_id' && k !== 'type'));
+        const unknownConstraintKeys = Object.keys(constraints).filter((k) => k !== 'callback_id' && k !== 'type');
         if (unknownConstraintKeys.length > 0) {
             this.logger.error(`View listener cannot be attached using unknown constraint keys: ${unknownConstraintKeys.join(', ')}`);
             return;
@@ -252,8 +254,9 @@ class App {
         const createSay = (channelId) => {
             const token = selectToken(context);
             return (message) => {
-                const postMessageArguments = (typeof message === 'string') ?
-                    { token, text: message, channel: channelId } : { ...message, token, channel: channelId };
+                const postMessageArguments = typeof message === 'string'
+                    ? { token, text: message, channel: channelId }
+                    : { ...message, token, channel: channelId };
                 return this.client.chat.postMessage(postMessageArguments);
             };
         };
@@ -262,16 +265,16 @@ class App {
         // const listenerArgs: Partial<AnyMiddlewareArgs> = {
         const listenerArgs = {
             body: bodyArg,
-            payload: (type === helpers_1.IncomingEventType.Event) ?
-                bodyArg.event :
-                (type === helpers_1.IncomingEventType.ViewAction) ?
-                    bodyArg.view :
-                    (type === helpers_1.IncomingEventType.Shortcut) ?
-                        bodyArg :
-                        (type === helpers_1.IncomingEventType.Action &&
-                            isBlockActionOrInteractiveMessageBody(bodyArg)) ?
-                            bodyArg.actions[0] :
-                            bodyArg,
+            payload: type === helpers_1.IncomingEventType.Event
+                ? bodyArg.event
+                : type === helpers_1.IncomingEventType.ViewAction
+                    ? bodyArg.view
+                    : type === helpers_1.IncomingEventType.Shortcut
+                        ? bodyArg
+                        : type === helpers_1.IncomingEventType.Action &&
+                            isBlockActionOrInteractiveMessageBody(bodyArg)
+                            ? bodyArg.actions[0]
+                            : bodyArg,
         };
         // Set aliases
         if (type === helpers_1.IncomingEventType.Event) {
@@ -309,7 +312,7 @@ class App {
         // Set respond() utility
         if (body.response_url) {
             listenerArgs.respond = (response) => {
-                const validResponse = (typeof response === 'string') ? { text: response } : response;
+                const validResponse = typeof response === 'string' ? { text: response } : response;
                 return this.axios.post(body.response_url, validResponse);
             };
         }
@@ -322,11 +325,12 @@ class App {
             await ack();
         }
         // Get the client arg
-        let client = this.client;
+        let { client } = this;
         const token = selectToken(context);
         if (token !== undefined) {
             let pool = this.clients[source.teamId];
             if (pool === undefined) {
+                // eslint-disable-next-line no-multi-assign
                 pool = this.clients[source.teamId] = new WebClientPool();
             }
             client = pool.getOrCreate(token, this.clientOptions);
@@ -348,12 +352,12 @@ class App {
                     }
                 });
                 const settledListenerResults = await allSettled(listenerResults);
-                const rejectedListenerResults = settledListenerResults.filter(lr => lr.status === 'rejected');
+                const rejectedListenerResults = settledListenerResults.filter((lr) => lr.status === 'rejected');
                 if (rejectedListenerResults.length === 1) {
                     throw rejectedListenerResults[0].reason;
                 }
                 else if (rejectedListenerResults.length > 1) {
-                    throw new errors_1.MultipleListenerError(rejectedListenerResults.map(rlr => rlr.reason));
+                    throw new errors_1.MultipleListenerError(rejectedListenerResults.map((rlr) => rlr.reason));
                 }
             });
         }
@@ -380,21 +384,43 @@ function buildSource(type, channelId, body) {
     // if this makes it prettier, great! but we should probably check perf before committing to any specific optimization.
     // tslint:disable:max-line-length
     const source = {
-        teamId: ((type === helpers_1.IncomingEventType.Event || type === helpers_1.IncomingEventType.Command) ? body.team_id :
-            (type === helpers_1.IncomingEventType.Action || type === helpers_1.IncomingEventType.Options || type === helpers_1.IncomingEventType.ViewAction || type === helpers_1.IncomingEventType.Shortcut) ? body.team.id :
-                helpers_1.assertNever(type)),
-        enterpriseId: ((type === helpers_1.IncomingEventType.Event || type === helpers_1.IncomingEventType.Command) ? body.enterprise_id :
-            (type === helpers_1.IncomingEventType.Action || type === helpers_1.IncomingEventType.Options || type === helpers_1.IncomingEventType.ViewAction || type === helpers_1.IncomingEventType.Shortcut) ? body.team.enterprise_id :
-                undefined),
-        userId: ((type === helpers_1.IncomingEventType.Event) ?
-            ((typeof body.event.user === 'string') ? body.event.user :
-                (typeof body.event.user === 'object') ? body.event.user.id :
-                    (body.event.channel !== undefined && body.event.channel.creator !== undefined) ? body.event.channel.creator :
-                        (body.event.subteam !== undefined && body.event.subteam.created_by !== undefined) ? body.event.subteam.created_by :
-                            undefined) :
-            (type === helpers_1.IncomingEventType.Action || type === helpers_1.IncomingEventType.Options || type === helpers_1.IncomingEventType.ViewAction || type === helpers_1.IncomingEventType.Shortcut) ? body.user.id :
-                (type === helpers_1.IncomingEventType.Command) ? body.user_id :
-                    undefined),
+        teamId: type === helpers_1.IncomingEventType.Event || type === helpers_1.IncomingEventType.Command
+            ? body.team_id
+            : type === helpers_1.IncomingEventType.Action ||
+                type === helpers_1.IncomingEventType.Options ||
+                type === helpers_1.IncomingEventType.ViewAction ||
+                type === helpers_1.IncomingEventType.Shortcut
+                ? body.team.id
+                : helpers_1.assertNever(type),
+        enterpriseId: type === helpers_1.IncomingEventType.Event || type === helpers_1.IncomingEventType.Command
+            ? body.enterprise_id
+            : type === helpers_1.IncomingEventType.Action ||
+                type === helpers_1.IncomingEventType.Options ||
+                type === helpers_1.IncomingEventType.ViewAction ||
+                type === helpers_1.IncomingEventType.Shortcut
+                ? body.team.enterprise_id
+                : undefined,
+        userId: type === helpers_1.IncomingEventType.Event
+            ? typeof body.event.user === 'string'
+                ? body.event.user
+                : typeof body.event.user === 'object'
+                    ? body.event.user.id
+                    : body.event.channel !== undefined &&
+                        body.event.channel.creator !== undefined
+                        ? body.event.channel.creator
+                        : body.event.subteam !== undefined &&
+                            body.event.subteam.created_by !== undefined
+                            ? body.event.subteam.created_by
+                            : undefined
+            : type === helpers_1.IncomingEventType.Action ||
+                type === helpers_1.IncomingEventType.Options ||
+                type === helpers_1.IncomingEventType.ViewAction ||
+                type === helpers_1.IncomingEventType.Shortcut
+                ? body.user
+                    .id
+                : type === helpers_1.IncomingEventType.Command
+                    ? body.user_id
+                    : undefined,
         conversationId: channelId,
     };
     // tslint:enable:max-line-length
@@ -411,18 +437,16 @@ function defaultErrorHandler(logger) {
 }
 function singleTeamAuthorization(client, authorization) {
     // TODO: warn when something needed isn't found
-    const identifiers = authorization.botUserId !== undefined &&
-        authorization.botId !== undefined ?
-        Promise.resolve({ botUserId: authorization.botUserId, botId: authorization.botId }) :
-        client.auth.test({ token: authorization.botToken })
-            .then((result) => {
+    const identifiers = authorization.botUserId !== undefined && authorization.botId !== undefined
+        ? Promise.resolve({ botUserId: authorization.botUserId, botId: authorization.botId })
+        : client.auth.test({ token: authorization.botToken }).then((result) => {
             return {
                 botUserId: result.user_id,
                 botId: result.bot_id,
             };
         });
     return async () => {
-        return Object.assign({ botToken: authorization.botToken }, await identifiers);
+        return { botToken: authorization.botToken, ...(await identifiers) };
     };
 }
 function selectToken(context) {
