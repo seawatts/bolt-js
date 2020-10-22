@@ -2,7 +2,7 @@
 import { Server } from 'http';
 import { Application, RequestHandler, Router } from 'express';
 import { Logger } from '@slack/logger';
-import { InstallProvider, StateStore, InstallationStore, CallbackOptions } from '@slack/oauth';
+import { InstallProvider, CallbackOptions, InstallProviderOptions, InstallURLOptions } from '@slack/oauth';
 import App from './App';
 import { Receiver } from './types';
 export interface ExpressReceiverOptions {
@@ -14,20 +14,22 @@ export interface ExpressReceiverOptions {
     processBeforeResponse?: boolean;
     clientId?: string;
     clientSecret?: string;
-    stateSecret?: string;
-    installationStore?: InstallationStore;
-    scopes?: string | string[];
+    stateSecret?: InstallProviderOptions['stateSecret'];
+    installationStore?: InstallProviderOptions['installationStore'];
+    scopes?: InstallURLOptions['scopes'];
     installerOptions?: InstallerOptions;
     app?: Application;
 }
 interface InstallerOptions {
-    stateStore?: StateStore;
-    authVersion?: 'v1' | 'v2';
-    metadata?: string;
+    stateStore?: InstallProviderOptions['stateStore'];
+    authVersion?: InstallProviderOptions['authVersion'];
+    metadata?: InstallURLOptions['metadata'];
     installPath?: string;
     redirectUriPath?: string;
     callbackOptions?: CallbackOptions;
-    userScopes?: string | string[];
+    userScopes?: InstallURLOptions['userScopes'];
+    clientOptions?: InstallProviderOptions['clientOptions'];
+    authorizationUrl?: InstallProviderOptions['authorizationUrl'];
 }
 /**
  * Receives HTTP requests with Events, Slash Commands, and Actions

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UnknownError = exports.MultipleListenerError = exports.ReceiverAuthenticityError = exports.ReceiverMultipleAckError = exports.ContextMissingPropertyError = exports.AuthorizationError = exports.AppInitializationError = exports.asCodedError = exports.ErrorCode = void 0;
+exports.WorkflowStepInitializationError = exports.UnknownError = exports.MultipleListenerError = exports.ReceiverAuthenticityError = exports.ReceiverMultipleAckError = exports.ContextMissingPropertyError = exports.AuthorizationError = exports.AppInitializationError = exports.asCodedError = exports.ErrorCode = void 0;
 var ErrorCode;
 (function (ErrorCode) {
     ErrorCode["AppInitializationError"] = "slack_bolt_app_initialization_error";
@@ -14,6 +14,7 @@ var ErrorCode;
      * in terms of CodedError.
      */
     ErrorCode["UnknownError"] = "slack_bolt_unknown_error";
+    ErrorCode["WorkflowStepInitializationError"] = "slack_bolt_workflow_step_initialization_error";
 })(ErrorCode = exports.ErrorCode || (exports.ErrorCode = {}));
 function asCodedError(error) {
     if (error.code !== undefined) {
@@ -75,4 +76,11 @@ class UnknownError extends Error {
     }
 }
 exports.UnknownError = UnknownError;
+class WorkflowStepInitializationError extends Error {
+    constructor() {
+        super(...arguments);
+        this.code = ErrorCode.WorkflowStepInitializationError;
+    }
+}
+exports.WorkflowStepInitializationError = WorkflowStepInitializationError;
 //# sourceMappingURL=errors.js.map

@@ -8,7 +8,7 @@ import { SlackOptionsMiddlewareArgs } from './options';
 import { SlackShortcutMiddlewareArgs } from './shortcuts';
 import { SlackViewMiddlewareArgs } from './view';
 export declare type AnyMiddlewareArgs = SlackEventMiddlewareArgs | SlackActionMiddlewareArgs | SlackCommandMiddlewareArgs | SlackOptionsMiddlewareArgs | SlackViewMiddlewareArgs | SlackShortcutMiddlewareArgs;
-interface AllMiddlewareArgs {
+export interface AllMiddlewareArgs {
     context: Context;
     logger: Logger;
     client: WebClient;
@@ -20,5 +20,4 @@ export interface Middleware<Args> {
 export interface Context extends StringIndexed {
 }
 export declare type NextFn = () => Promise<void>;
-export {};
 //# sourceMappingURL=middleware.d.ts.map

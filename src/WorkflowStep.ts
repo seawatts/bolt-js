@@ -263,7 +263,7 @@ function createStepConfigure(args: AllWorkflowStepMiddlewareArgs<WorkflowStepEdi
       trigger_id,
       view: {
         callback_id,
-        type: 'workflow_step',
+        type: 'home',
         ...params,
       },
     });

@@ -5,7 +5,7 @@ import { StringIndexed } from '../helpers';
  *
  * This is a discriminated union. The discriminant is the `type` property.
  */
-export declare type SlackEvent = AppRequestedEvent | AppHomeOpenedEvent | AppMentionEvent | AppUninstalledEvent | CallRejectedEvent | ChannelArchiveEvent | ChannelCreatedEvent | ChannelDeletedEvent | ChannelHistoryChangedEvent | ChannelLeftEvent | ChannelRenameEvent | ChannelSharedEvent | ChannelUnarchiveEvent | ChannelUnsharedEvent | DNDUpdatedEvent | DNDUpdatedUserEvent | EmailDomainChangedEvent | EmojiChangedEvent | FileChangeEvent | FileCommentDeletedEvent | FileCreatedEvent | FileDeletedEvent | FilePublicEvent | FileSharedEvent | FileUnsharedEvent | GridMigrationFinishedEvent | GridMigrationStartedEvent | GroupArchiveEvent | GroupCloseEvent | GroupDeletedEvent | GroupHistoryChangedEvent | GroupLeftEvent | GroupOpenEvent | GroupRenameEvent | GroupUnarchiveEvent | IMCloseEvent | IMCreatedEvent | IMHistoryChangedEvent | IMOpenEvent | InviteRequestedEvent | LinkSharedEvent | MemberJoinedChannelEvent | MemberLeftChannelEvent | MessageEvent | PinAddedEvent | PinRemovedEvent | ReactionAddedEvent | ReactionRemovedEvent | StarAddedEvent | StarRemovedEvent | SubteamCreated | SubteamMembersChanged | SubteamSelfAddedEvent | SubteamSelfRemovedEvent | SubteamUpdatedEvent | TeamDomainChangedEvent | TeamJoinEvent | TeamRenameEvent | TokensRevokedEvent | UserChangeEvent;
+export declare type SlackEvent = AppRequestedEvent | AppHomeOpenedEvent | AppMentionEvent | AppUninstalledEvent | CallRejectedEvent | ChannelArchiveEvent | ChannelCreatedEvent | ChannelDeletedEvent | ChannelHistoryChangedEvent | ChannelLeftEvent | ChannelRenameEvent | ChannelSharedEvent | ChannelUnarchiveEvent | ChannelUnsharedEvent | DNDUpdatedEvent | DNDUpdatedUserEvent | EmailDomainChangedEvent | EmojiChangedEvent | FileChangeEvent | FileCommentDeletedEvent | FileCreatedEvent | FileDeletedEvent | FilePublicEvent | FileSharedEvent | FileUnsharedEvent | GridMigrationFinishedEvent | GridMigrationStartedEvent | GroupArchiveEvent | GroupCloseEvent | GroupDeletedEvent | GroupHistoryChangedEvent | GroupLeftEvent | GroupOpenEvent | GroupRenameEvent | GroupUnarchiveEvent | IMCloseEvent | IMCreatedEvent | IMHistoryChangedEvent | IMOpenEvent | InviteRequestedEvent | LinkSharedEvent | MemberJoinedChannelEvent | MemberLeftChannelEvent | MessageEvent | PinAddedEvent | PinRemovedEvent | ReactionAddedEvent | ReactionRemovedEvent | StarAddedEvent | StarRemovedEvent | SubteamCreated | SubteamMembersChanged | SubteamSelfAddedEvent | SubteamSelfRemovedEvent | SubteamUpdatedEvent | TeamDomainChangedEvent | TeamJoinEvent | TeamRenameEvent | TokensRevokedEvent | UserChangeEvent | WorkflowStepExecuteEvent;
 /**
  * Any event in Slack's Events API
  *
@@ -547,6 +547,27 @@ export interface TokensRevokedEvent extends StringIndexed {
 export interface UserChangeEvent extends StringIndexed {
     type: 'user_change';
     user: {};
+}
+export interface WorkflowStepExecuteEvent extends StringIndexed {
+    type: 'workflow_step_execute';
+    callback_id: string;
+    workflow_step: {
+        workflow_step_execute_id: string;
+        workflow_id: string;
+        workflow_instance_id: string;
+        step_id: string;
+        inputs: {
+            [key: string]: {
+                value: any;
+            };
+        };
+        outputs: {
+            name: string;
+            type: string;
+            label: string;
+        }[];
+    };
+    event_ts: string;
 }
 export {};
 //# sourceMappingURL=base-events.d.ts.map

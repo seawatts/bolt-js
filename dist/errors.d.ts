@@ -12,7 +12,8 @@ export declare enum ErrorCode {
      * This value is used to assign to errors that occur inside the framework but do not have a code, to keep interfaces
      * in terms of CodedError.
      */
-    UnknownError = "slack_bolt_unknown_error"
+    UnknownError = "slack_bolt_unknown_error",
+    WorkflowStepInitializationError = "slack_bolt_workflow_step_initialization_error"
 }
 export declare function asCodedError(error: CodedError | Error): CodedError;
 export declare class AppInitializationError extends Error implements CodedError {
@@ -44,5 +45,8 @@ export declare class UnknownError extends Error implements CodedError {
     code: ErrorCode;
     original: Error;
     constructor(original: Error);
+}
+export declare class WorkflowStepInitializationError extends Error implements CodedError {
+    code: ErrorCode;
 }
 //# sourceMappingURL=errors.d.ts.map

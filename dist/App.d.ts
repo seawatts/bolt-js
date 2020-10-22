@@ -6,6 +6,7 @@ import { Request, Response } from 'express';
 import { Logger, LogLevel } from '@slack/logger';
 import { ExpressReceiverOptions } from './ExpressReceiver';
 import { ConversationStore } from './conversation-store';
+import { WorkflowStep } from './WorkflowStep';
 import { Middleware, AnyMiddlewareArgs, SlackActionMiddlewareArgs, SlackCommandMiddlewareArgs, SlackEventMiddlewareArgs, SlackOptionsMiddlewareArgs, SlackShortcutMiddlewareArgs, SlackViewMiddlewareArgs, SlackAction, SlackShortcut, OptionsSource, BlockAction, SlackViewAction, Receiver, ReceiverEvent } from './types';
 import { CodedError } from './errors';
 /** App initialization options */
@@ -91,6 +92,7 @@ export default class App {
     private listeners;
     private errorHandler;
     private axios;
+    private installerOptions;
     constructor({ signingSecret, endpoints, agent, clientTls, receiver, convoStore, token, botId, botUserId, authorize, logger, logLevel, ignoreSelf, clientOptions, processBeforeResponse, clientId, clientSecret, stateSecret, installationStore, scopes, installerOptions, }?: AppOptions);
     /**
      * Register a new middleware, processed in the order registered.
@@ -98,6 +100,12 @@ export default class App {
      * @param m global middleware function
      */
     use(m: Middleware<AnyMiddlewareArgs>): this;
+    /**
+     * Register WorkflowStep middleware
+     *
+     * @param workflowStep global workflow step middleware function
+     */
+    step(workflowStep: WorkflowStep): this;
     /**
      * Convenience method to call start on the receiver
      *

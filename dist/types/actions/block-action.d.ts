@@ -44,10 +44,12 @@ export interface StaticSelectAction extends BasicElementAction<'static_select'> 
  * An action from a multi select menu with static options
  */
 export interface MultiStaticSelectAction extends BasicElementAction<'multi_static_select'> {
-    selected_options: [{
-        text: PlainTextElement;
-        value: string;
-    }];
+    selected_options: [
+        {
+            text: PlainTextElement;
+            value: string;
+        }
+    ];
     initial_options?: [Option];
     placeholder?: PlainTextElement;
     confirm?: Confirmation;
@@ -140,7 +142,7 @@ export interface OverflowAction extends BasicElementAction<'overflow'> {
  * An action from a date picker element
  */
 export interface DatepickerAction extends BasicElementAction<'datepicker'> {
-    selected_date: string;
+    selected_date: string | null;
     initial_date?: string;
     placeholder?: PlainTextElement;
     confirm?: Confirmation;
@@ -149,7 +151,7 @@ export interface DatepickerAction extends BasicElementAction<'datepicker'> {
  * An action from a radio button element
  */
 export interface RadioButtonsAction extends BasicElementAction<'radio_buttons'> {
-    selected_option: Option;
+    selected_option: Option | null;
     initial_option?: Option;
     confirm?: Confirmation;
 }

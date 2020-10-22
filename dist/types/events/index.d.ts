@@ -26,7 +26,17 @@ interface EnvelopedEvent<Event = BasicSlackEvent> extends StringIndexed {
     type: 'event_callback';
     event_id: string;
     event_time: number;
-    authed_users: string[];
+    authed_users?: string[];
+    authed_teams?: string[];
+    is_ext_shared_channel?: boolean;
+    authorizations?: Authorization[];
+}
+interface Authorization {
+    enterprise_id: string | null;
+    team_id: string | null;
+    user_id: string;
+    is_bot: boolean;
+    is_enterprise_install?: boolean;
 }
 /**
  * Type function which given a string `T` returns a type for the matching Slack event(s).

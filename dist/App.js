@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.LogLevel = void 0;
 const util_1 = __importDefault(require("util"));
 const web_api_1 = require("@slack/web-api");
 const logger_1 = require("@slack/logger");
@@ -68,6 +69,11 @@ class App {
         });
         this.middleware = [];
         this.listeners = [];
+        // Add clientOptions to InstallerOptions to pass them to @slack/oauth
+        this.installerOptions = {
+            clientOptions: this.clientOptions,
+            ...installerOptions,
+        };
         // Check for required arguments of ExpressReceiver
         if (receiver !== undefined) {
             this.receiver = receiver;
@@ -87,8 +93,8 @@ class App {
                 clientSecret,
                 stateSecret,
                 installationStore,
-                installerOptions,
                 scopes,
+                installerOptions: this.installerOptions,
                 logger: this.logger,
             });
         }
@@ -140,6 +146,16 @@ class App {
      * @param m global middleware function
      */
     use(m) {
+        this.middleware.push(m);
+        return this;
+    }
+    /**
+     * Register WorkflowStep middleware
+     *
+     * @param workflowStep global workflow step middleware function
+     */
+    step(workflowStep) {
+        const m = workflowStep.getMiddleware();
         this.middleware.push(m);
         return this;
     }
